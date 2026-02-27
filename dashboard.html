@@ -25,31 +25,31 @@
 
             <nav class="sidebar-nav">
                 <span class="nav-section-label">Overview</span>
-                <a class="nav-item active" href="dashboard.html" id="nav-dashboard">
+                <a class="nav-item active" data-panel="dashboard" id="nav-dashboard">
                     <span class="nav-icon">📊</span> Dashboard
                 </a>
-                <a class="nav-item" href="dashboard.html" id="nav-repositories">
+                <a class="nav-item" data-panel="dashboard" id="nav-repositories">
                     <span class="nav-icon">📁</span> Repositories
-                </a>
-                <a class="nav-item" href="dashboard.html" id="nav-prs">
-                    <span class="nav-icon">🔀</span> Pull Requests
                 </a>
 
                 <span class="nav-section-label">Analytics</span>
-                <a class="nav-item" href="dashboard.html" id="nav-sprints">
-                    <span class="nav-icon">🏃</span> Sprints
+                <a class="nav-item" data-panel="issue-classifier" id="nav-issue-classifier">
+                    <span class="nav-icon">🏷️</span> Issue Classifier
                 </a>
-                <a class="nav-item" href="dashboard.html" id="nav-team">
-                    <span class="nav-icon">👥</span> Team
+                <a class="nav-item" data-panel="pr-intelligence" id="nav-pr-intelligence">
+                    <span class="nav-icon">🔍</span> PR Intelligence
                 </a>
-                <a class="nav-item" href="dashboard.html" id="nav-insights">
-                    <span class="nav-icon">💡</span> AI Insights
+                <a class="nav-item" data-panel="assignee-recommender" id="nav-assignee-recommender">
+                    <span class="nav-icon">👤</span> Assignee Recommender
+                </a>
+                <a class="nav-item" data-panel="reviewer-recommender" id="nav-reviewer-recommender">
+                    <span class="nav-icon">👥</span> Reviewer Recommender
+                </a>
+                <a class="nav-item" data-panel="workload-analyzer" id="nav-workload-analyzer">
+                    <span class="nav-icon">⚖️</span> Workload Analyzer
                 </a>
 
                 <span class="nav-section-label">Manage</span>
-                <a class="nav-item" href="dashboard.html" id="nav-integrations">
-                    <span class="nav-icon">🔗</span> Integrations
-                </a>
                 <a class="nav-item" href="settings.html" id="nav-settings">
                     <span class="nav-icon">⚙️</span> Settings
                 </a>
@@ -72,11 +72,11 @@
             <!-- Top Bar -->
             <header class="topbar" id="topbar">
                 <div class="topbar-left">
-                    <h2>Dashboard</h2>
-                    <span class="topbar-breadcrumb">/ Overview</span>
+                    <h2 id="page-title">Dashboard</h2>
+                    <span class="topbar-breadcrumb" id="page-breadcrumb">/ Overview</span>
                 </div>
                 <div class="topbar-right">
-                    <div class="search-box" id="search-box">
+                    <div class="search-box">
                         <span>🔍</span>
                         <input type="text" placeholder="Search repos, PRs, team…" id="search-input">
                         <kbd>⌘K</kbd>
@@ -86,40 +86,32 @@
                 </div>
             </header>
 
-            <!-- Dashboard Body -->
-            <div class="dashboard-content">
+            <!-- ============ PANEL: Dashboard (default) ============ -->
+            <div class="dashboard-content panel-content" id="panel-dashboard">
 
-                <!-- ── Metric Cards ── -->
                 <div class="section-header">
                     <h3>Key Metrics</h3>
                     <span class="view-all">Live from GitHub</span>
                 </div>
-
                 <div class="metrics-grid" id="metrics-grid">
                     <div class="loading-state">
                         <div class="spinner"></div><br>Loading metrics…
                     </div>
                 </div>
 
-                <!-- ── Charts ── -->
                 <div class="charts-grid">
                     <div class="chart-card">
                         <h4>Merged PRs Trend</h4>
                         <p class="chart-subtitle">Recently merged pull requests by date</p>
-                        <div class="chart-wrapper">
-                            <canvas id="velocityChart"></canvas>
-                        </div>
+                        <div class="chart-wrapper"><canvas id="velocityChart"></canvas></div>
                     </div>
                     <div class="chart-card">
                         <h4>Top Contributors</h4>
                         <p class="chart-subtitle">Commits in most active repository</p>
-                        <div class="chart-wrapper">
-                            <canvas id="teamChart"></canvas>
-                        </div>
+                        <div class="chart-wrapper"><canvas id="teamChart"></canvas></div>
                     </div>
                 </div>
 
-                <!-- ── Recent PRs Table ── -->
                 <div class="table-card" id="prs-table">
                     <div class="table-card-header">
                         <h4>Recent Pull Requests</h4>
@@ -151,14 +143,11 @@
                     </table>
                 </div>
 
-                <!-- ── Bottom Grid: Repos + Activity ── -->
                 <div class="bottom-grid">
-
-                    <!-- Repository List -->
-                    <div class="table-card" id="repo-health-table">
+                    <div class="table-card">
                         <div class="table-card-header">
                             <h4>Repositories</h4>
-                            <span class="view-all" style="font-size: 12px; color: var(--text-tertiary);">From your
+                            <span class="view-all" style="font-size:12px;color:var(--text-tertiary)">From your
                                 GitHub</span>
                         </div>
                         <table class="data-table">
@@ -182,9 +171,7 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Activity Feed -->
-                    <div class="activity-feed" id="activity-feed">
+                    <div class="activity-feed">
                         <h4>Recent Activity</h4>
                         <div id="activity-feed-body">
                             <div class="loading-state">
@@ -193,8 +180,113 @@
                         </div>
                     </div>
                 </div>
-
             </div>
+
+            <!-- ============ PANEL: Issue Classifier ============ -->
+            <div class="dashboard-content panel-content" id="panel-issue-classifier" style="display:none">
+                <div class="agent-panel">
+                    <div class="agent-header">
+                        <div class="agent-icon-large">🏷️</div>
+                        <div>
+                            <h3>Issue Classification Agent</h3>
+                            <p class="agent-desc">Classifies open issues as Bug / Feature / Refactor / Question with
+                                priority levels and suggested labels.</p>
+                        </div>
+                    </div>
+                    <div class="agent-input-group">
+                        <input type="text" class="agent-repo-input" id="ic-repo"
+                            placeholder="owner/repo (e.g. facebook/react)">
+                        <button class="btn-primary agent-run-btn" id="ic-run" style="border-radius:10px">🚀 Analyze
+                            Issues</button>
+                    </div>
+                    <div class="agent-results" id="ic-results"></div>
+                </div>
+            </div>
+
+            <!-- ============ PANEL: PR Intelligence ============ -->
+            <div class="dashboard-content panel-content" id="panel-pr-intelligence" style="display:none">
+                <div class="agent-panel">
+                    <div class="agent-header">
+                        <div class="agent-icon-large">🔍</div>
+                        <div>
+                            <h3>PR Intelligence Agent</h3>
+                            <p class="agent-desc">Analyzes pull requests for risk level, generates summaries and review
+                                checklists.</p>
+                        </div>
+                    </div>
+                    <div class="agent-input-group">
+                        <input type="text" class="agent-repo-input" id="pri-repo"
+                            placeholder="owner/repo (e.g. facebook/react)">
+                        <button class="btn-primary agent-run-btn" id="pri-run" style="border-radius:10px">🚀 Analyze
+                            PRs</button>
+                    </div>
+                    <div class="agent-results" id="pri-results"></div>
+                </div>
+            </div>
+
+            <!-- ============ PANEL: Assignee Recommender ============ -->
+            <div class="dashboard-content panel-content" id="panel-assignee-recommender" style="display:none">
+                <div class="agent-panel">
+                    <div class="agent-header">
+                        <div class="agent-icon-large">👤</div>
+                        <div>
+                            <h3>Assignee Recommendation Agent</h3>
+                            <p class="agent-desc">Recommends the best developers to assign to each open issue based on
+                                commit history and expertise.</p>
+                        </div>
+                    </div>
+                    <div class="agent-input-group">
+                        <input type="text" class="agent-repo-input" id="ar-repo"
+                            placeholder="owner/repo (e.g. facebook/react)">
+                        <button class="btn-primary agent-run-btn" id="ar-run" style="border-radius:10px">🚀 Find
+                            Assignees</button>
+                    </div>
+                    <div class="agent-results" id="ar-results"></div>
+                </div>
+            </div>
+
+            <!-- ============ PANEL: Reviewer Recommender ============ -->
+            <div class="dashboard-content panel-content" id="panel-reviewer-recommender" style="display:none">
+                <div class="agent-panel">
+                    <div class="agent-header">
+                        <div class="agent-icon-large">👥</div>
+                        <div>
+                            <h3>Reviewer Recommendation Agent</h3>
+                            <p class="agent-desc">Suggests the best code reviewers for each PR based on file ownership
+                                and recent activity.</p>
+                        </div>
+                    </div>
+                    <div class="agent-input-group">
+                        <input type="text" class="agent-repo-input" id="rr-repo"
+                            placeholder="owner/repo (e.g. facebook/react)">
+                        <button class="btn-primary agent-run-btn" id="rr-run" style="border-radius:10px">🚀 Find
+                            Reviewers</button>
+                    </div>
+                    <div class="agent-results" id="rr-results"></div>
+                </div>
+            </div>
+
+            <!-- ============ PANEL: Workload Analyzer ============ -->
+            <div class="dashboard-content panel-content" id="panel-workload-analyzer" style="display:none">
+                <div class="agent-panel">
+                    <div class="agent-header">
+                        <div class="agent-icon-large">⚖️</div>
+                        <div>
+                            <h3>Workload Analysis Agent</h3>
+                            <p class="agent-desc">Analyzes developer workload across issues and PR reviews, with
+                                AI-powered balancing recommendations.</p>
+                        </div>
+                    </div>
+                    <div class="agent-input-group">
+                        <input type="text" class="agent-repo-input" id="wa-repo"
+                            placeholder="owner/repo (e.g. facebook/react)">
+                        <button class="btn-primary agent-run-btn" id="wa-run" style="border-radius:10px">🚀 Analyze
+                            Workload</button>
+                    </div>
+                    <div class="agent-results" id="wa-results"></div>
+                </div>
+            </div>
+
         </main>
     </div>
 

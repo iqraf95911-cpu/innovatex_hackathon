@@ -1352,6 +1352,372 @@ button {
   text-decoration: underline;
 }
 
+/* ===== AGENT PANELS ===== */
+
+.agent-panel {
+  max-width: 900px;
+}
+
+.agent-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.agent-icon-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.agent-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.agent-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.agent-input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.agent-repo-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.agent-repo-input:focus {
+  border-color: var(--accent);
+}
+
+.agent-repo-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.agent-run-btn {
+  white-space: nowrap;
+  padding: 12px 24px !important;
+}
+
+.agent-run-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.agent-results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Result Cards */
+.result-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+}
+
+.result-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.result-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.result-card-title .issue-num {
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.result-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge-classification {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge-classification.bug {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge-classification.feature {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.badge-classification.refactor {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge-classification.question {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.badge-priority {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.badge-priority.high {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge-priority.medium {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge-priority.low {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.badge-risk {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-risk.high {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge-risk.medium {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge-risk.low {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.result-body {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.result-body .result-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.result-body .result-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 12px;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.result-labels-list {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.result-label-tag {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Assignee / Reviewer cards */
+.candidate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.candidate-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.candidate-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.candidate-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.candidate-name {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.candidate-reasoning {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+}
+
+.candidate-score {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* Review checklist */
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.checklist li::before {
+  content: "☐";
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Workload table */
+.workload-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.workload-table th {
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.workload-table td {
+  padding: 12px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.workload-table tr:last-child td {
+  border-bottom: none;
+}
+
+.load-bar {
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.load-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+.ai-recommendation-box {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.ai-recommendation-box strong {
+  color: var(--text-primary);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1100px) {
   .metrics-grid {
