@@ -28,11 +28,11 @@
                 <a class="nav-item active" data-panel="dashboard" id="nav-dashboard">
                     <span class="nav-icon">📊</span> Dashboard
                 </a>
-                <a class="nav-item" data-panel="dashboard" id="nav-repositories">
-                    <span class="nav-icon">📁</span> Repositories
-                </a>
 
                 <span class="nav-section-label">Analytics</span>
+                <a class="nav-item" data-panel="repository-analyzer" id="nav-repository-analyzer">
+                    <span class="nav-icon">📦</span> Repository Analyzer
+                </a>
                 <a class="nav-item" data-panel="issue-classifier" id="nav-issue-classifier">
                     <span class="nav-icon">🏷️</span> Issue Classifier
                 </a>
@@ -42,15 +42,12 @@
                 <a class="nav-item" data-panel="assignee-recommender" id="nav-assignee-recommender">
                     <span class="nav-icon">👤</span> Assignee Recommender
                 </a>
-                <a class="nav-item" data-panel="reviewer-recommender" id="nav-reviewer-recommender">
-                    <span class="nav-icon">👥</span> Reviewer Recommender
-                </a>
                 <a class="nav-item" data-panel="workload-analyzer" id="nav-workload-analyzer">
                     <span class="nav-icon">⚖️</span> Workload Analyzer
                 </a>
 
                 <span class="nav-section-label">Manage</span>
-                <a class="nav-item" href="settings.html" id="nav-settings">
+                <a class="nav-item" href="settings.html" id="nav-settings" target="_self">
                     <span class="nav-icon">⚙️</span> Settings
                 </a>
             </nav>
@@ -182,6 +179,26 @@
                 </div>
             </div>
 
+            <!-- ============ PANEL: Repository Analyzer ============ -->
+            <div class="dashboard-content panel-content" id="panel-repository-analyzer" style="display:none">
+                <div class="agent-panel">
+                    <div class="agent-header">
+                        <div class="agent-icon-large">📦</div>
+                        <div>
+                            <h3>Repository Analyzer Agent</h3>
+                            <p class="agent-desc">Analyzes repository structure, identifies key features, technology stack, architecture patterns, and provides actionable recommendations.</p>
+                        </div>
+                    </div>
+                    <div class="agent-input-group">
+                        <input type="text" class="agent-repo-input" id="ra-repo"
+                            placeholder="owner/repo (e.g. facebook/react)">
+                        <button class="btn-primary agent-run-btn" id="ra-run" style="border-radius:10px">🚀 Analyze
+                            Repository</button>
+                    </div>
+                    <div class="agent-results" id="ra-results"></div>
+                </div>
+            </div>
+
             <!-- ============ PANEL: Issue Classifier ============ -->
             <div class="dashboard-content panel-content" id="panel-issue-classifier" style="display:none">
                 <div class="agent-panel">
@@ -242,27 +259,6 @@
                             Assignees</button>
                     </div>
                     <div class="agent-results" id="ar-results"></div>
-                </div>
-            </div>
-
-            <!-- ============ PANEL: Reviewer Recommender ============ -->
-            <div class="dashboard-content panel-content" id="panel-reviewer-recommender" style="display:none">
-                <div class="agent-panel">
-                    <div class="agent-header">
-                        <div class="agent-icon-large">👥</div>
-                        <div>
-                            <h3>Reviewer Recommendation Agent</h3>
-                            <p class="agent-desc">Suggests the best code reviewers for each PR based on file ownership
-                                and recent activity.</p>
-                        </div>
-                    </div>
-                    <div class="agent-input-group">
-                        <input type="text" class="agent-repo-input" id="rr-repo"
-                            placeholder="owner/repo (e.g. facebook/react)">
-                        <button class="btn-primary agent-run-btn" id="rr-run" style="border-radius:10px">🚀 Find
-                            Reviewers</button>
-                    </div>
-                    <div class="agent-results" id="rr-results"></div>
                 </div>
             </div>
 

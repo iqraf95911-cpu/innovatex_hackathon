@@ -46,10 +46,12 @@ app.add_middleware(
 from routes.issues import router as issues_router
 from routes.prs import router as prs_router
 from routes.workload import router as workload_router
+from routes.repository import router as repository_router
 
 app.include_router(issues_router)
 app.include_router(prs_router)
 app.include_router(workload_router)
+app.include_router(repository_router)
 
 
 # ---- Config Endpoints ----

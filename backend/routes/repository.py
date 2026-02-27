@@ -1,21 +1,21 @@
-"""Routes for issue analysis endpoints."""
+"""Routes for repository analysis endpoints."""
 
 from fastapi import APIRouter, HTTPException
 import httpx
-from schemas.request_models import AnalyzeIssuesRequest
+from schemas.request_models import AnalyzeRepositoryRequest
 from agents import planner_agent
 
-router = APIRouter(prefix="/api/ai", tags=["Issues"])
+router = APIRouter(prefix="/api/ai", tags=["Repository"])
 
 
-@router.post("/analyze-issues")
-async def analyze_issues(req: AnalyzeIssuesRequest):
-    """Analyze open issues for a repository.
+@router.post("/analyze-repository")
+async def analyze_repository(req: AnalyzeRepositoryRequest):
+    """Analyze a repository for structure, features, and insights.
 
-    Returns classified issues with priority, labels, and assignee recommendations.
+    Returns repository overview, key features, technology stack, and recommendations.
     """
     try:
-        result = await planner_agent.analyze_issues(req.owner, req.repo)
+        result = await planner_agent.analyze_repository(req.owner, req.repo)
         return result
     except httpx.HTTPStatusError as e:
         if e.response.status_code == 404:

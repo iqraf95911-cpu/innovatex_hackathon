@@ -179,3 +179,85 @@ async def analyze_workload(owner: str, repo: str) -> dict:
         "repo": f"{owner}/{repo}",
         "analysis": result,
     }
+
+
+
+async def analyze_repository(owner: str, repo: str) -> dict:
+    """Orchestrate repository analysis pipeline.
+
+    Flow:
+    1. Fetch repository details
+    2. Fetch languages
+    3. Fetch README
+    4. Fetch contributors count
+    5. Call Repository Analyzer Agent
+    6. Return structured analysis
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    # Step 1: Fetch repository details
+    repo_data = await github_service.get_repository(owner, repo)
+    logger.info(f"Fetched repo data for {owner}/{repo}")
+
+    # Step 2: Fetch languages
+    try:
+        languages = await github_service.get_languages(owner, repo)
+        logger.info(f"Languages found: {list(languages.keys()) if languages else 'None'}")
+    except Exception as e:
+        logger.warning(f"Failed to fetch languages: {e}")
+        languages = {}
+
+    # Step 3: Fetch README
+    try:
+        readme_content = await github_service.get_readme(owner, repo)
+        logger.info(f"README fetched: {len(readme_content)} chars")
+    except Exception as e:
+        logger.warning(f"Failed to fetch README: {e}")
+        readme_content = ""
+
+    # Step 4: Get contributors count
+    contributors_count = 0
+    try:
+        contributors = await github_service.get_contributors(owner, repo)
+        contributors_count = len(contributors) if contributors else 0
+        logger.info(f"Contributors fetched: {contributors_count} contributors")
+    except Exception as e:
+        logger.warning(f"Failed to fetch contributors: {e}")
+        # If stats fail, try to get from repo data
+        contributors_count = repo_data.get("network_count", 0)
+        if contributors_count == 0:
+            # Fallback: estimate from forks (rough approximation)
+            contributors_count = max(1, repo_data.get("forks_count", 0) // 10)
+        logger.info(f"Using fallback contributors count: {contributors_count}")
+
+    # Step 5: Analyze
+    from agents import repository_analyzer_agent
+    
+    analysis = await repository_analyzer_agent.analyze(
+        repo_data=repo_data,
+        languages=languages,
+        topics=repo_data.get("topics", []),
+        readme_content=readme_content,
+        contributors_count=contributors_count
+    )
+
+    # Step 6: Return structured output
+    return {
+        "repo": f"{owner}/{repo}",
+        "repository_info": {
+            "name": repo_data.get("name", ""),
+            "full_name": repo_data.get("full_name", ""),
+            "description": repo_data.get("description", ""),
+            "url": repo_data.get("html_url", ""),
+            "stars": repo_data.get("stargazers_count", 0),
+            "forks": repo_data.get("forks_count", 0),
+            "watchers": repo_data.get("watchers_count", 0),
+            "open_issues": repo_data.get("open_issues_count", 0),
+            "language": repo_data.get("language", "Unknown"),
+            "created_at": repo_data.get("created_at", ""),
+            "updated_at": repo_data.get("updated_at", ""),
+            "license": repo_data.get("license", {}).get("name", "No license") if repo_data.get("license") else "No license",
+        },
+        "analysis": analysis
+    }

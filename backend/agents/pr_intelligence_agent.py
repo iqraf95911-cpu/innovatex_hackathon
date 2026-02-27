@@ -21,17 +21,20 @@ async def analyze(pr_title: str, pr_description: str, files_changed_count: int,
     # Try LLM for intelligent summary + checklist
     if llm_service.is_available():
         files_text = ", ".join(paths[:15]) if paths else "not available"
+        # Limit PR description to avoid token limits, but keep it reasonable
+        pr_desc_snippet = pr_description[:1000] if pr_description else "No description"
+        
         prompt = f"""You are a senior code reviewer. Analyze this pull request and provide a structured review.
 
 PR Title: {pr_title}
-PR Description: {pr_description or 'No description'}
+PR Description: {pr_desc_snippet}
 Files Changed: {files_changed_count}
 File Paths: {files_text}
 Computed Risk Level: {risk_level}
 
 Respond with ONLY a JSON object:
 {{
-    "summary": "<2-3 sentence summary of what this PR does>",
+    "summary": "<Complete 2-3 sentence summary of what this PR does. Be specific and include key details.>",
     "risk_level": "{risk_level}",
     "review_checklist": [
         "<specific review item 1>",
@@ -40,18 +43,31 @@ Respond with ONLY a JSON object:
     ]
 }}
 
-The review_checklist should contain 3-5 specific, actionable items based on the files changed."""
+IMPORTANT: 
+- Make the summary COMPLETE - don't cut off mid-sentence
+- Include specific details about what changes are being made
+- The review_checklist should contain 3-5 specific, actionable items based on the files changed."""
 
         result = await llm_service.generate(prompt, expect_json=True)
         if result and isinstance(result, dict):
             result["risk_level"] = risk_level  # Keep rule-based risk
-            return result
+            # Ensure summary is not empty or truncated
+            if result.get("summary") and len(result["summary"]) > 10:
+                return result
 
     # Fallback — generate checklist based on file patterns
     checklist = _generate_checklist(paths, files_changed_count)
-
+    
+    # Create a complete summary without truncation
+    summary_parts = [f"PR '{pr_title}' modifies {files_changed_count} file(s)."]
+    if pr_description:
+        # Don't truncate - include full description
+        summary_parts.append(pr_description)
+    else:
+        summary_parts.append("No description provided.")
+    
     return {
-        "summary": f"PR '{pr_title}' modifies {files_changed_count} file(s). {pr_description[:150] if pr_description else 'No description provided.'}",
+        "summary": " ".join(summary_parts),
         "risk_level": risk_level,
         "review_checklist": checklist,
     }

@@ -16,8 +16,8 @@ const panelTitles = {
     'issue-classifier': ['Issue Classifier', '/ AI Agent'],
     'pr-intelligence': ['PR Intelligence', '/ AI Agent'],
     'assignee-recommender': ['Assignee Recommender', '/ AI Agent'],
-    'reviewer-recommender': ['Reviewer Recommender', '/ AI Agent'],
     'workload-analyzer': ['Workload Analyzer', '/ AI Agent'],
+    'repository-analyzer': ['Repository Analyzer', '/ AI Agent'],
 };
 
 function switchPanel(panelId) {
@@ -115,9 +115,16 @@ function parseRepo(input) {
 // ========== DASHBOARD (Overview) ==========
 
 async function initDashboard() {
+    // First, load dummy data immediately
+    loadDummyData();
+    
+    // Then try to load real data if connected
     try {
         const status = await apiGH('/api/settings/token-status');
-        if (!status.connected) { showTokenBanner(); return; }
+        if (!status.connected) { 
+            showTokenBanner(); 
+            return; // Keep dummy data
+        }
         const u = status.user;
         const sidebar = document.querySelector('.sidebar-user');
         if (sidebar) {
@@ -125,13 +132,168 @@ async function initDashboard() {
             sidebar.querySelector('.role').textContent = '@' + u.login;
             sidebar.querySelector('.user-avatar').textContent = (u.login || '??').substring(0, 2).toUpperCase();
         }
-    } catch (e) { return; }
+        
+        // Load real data
+        loadMetrics();
+        loadPRsTable();
+        loadReposTable();
+        loadActivityFeed();
+        loadCharts();
+    } catch (e) { 
+        // Keep dummy data on error
+        return; 
+    }
+}
 
-    loadMetrics();
-    loadPRsTable();
-    loadReposTable();
-    loadActivityFeed();
-    loadCharts();
+function loadDummyData() {
+    loadDummyMetrics();
+    loadDummyPRsTable();
+    loadDummyReposTable();
+    loadDummyActivityFeed();
+    loadDummyCharts();
+}
+
+function loadDummyMetrics() {
+    const g = document.getElementById('metrics-grid'); if (!g) return;
+    g.innerHTML = `
+      <div class="metric-card"><div class="metric-label"><span class="metric-icon">📁</span> Repos</div><div class="metric-value">24</div><div class="metric-change positive">156 PRs tracked</div></div>
+      <div class="metric-card"><div class="metric-label"><span class="metric-icon">⏱️</span> Avg Cycle</div><div class="metric-value">4.2h</div><div class="metric-change neutral">89 merged</div></div>
+      <div class="metric-card"><div class="metric-label"><span class="metric-icon">🚀</span> Velocity</div><div class="metric-value">61</div><div class="metric-change neutral">PRs in 14d</div></div>
+      <div class="metric-card"><div class="metric-label"><span class="metric-icon">✅</span> Review</div><div class="metric-value">92%</div><div class="metric-change neutral">12 open</div></div>`;
+}
+
+function loadDummyPRsTable() {
+    const tb = document.getElementById('prs-tbody'); if (!tb) return;
+    const dummyPRs = [
+        { number: 1847, title: 'Add user authentication module', author: 'sarah-dev', avatar: 'SD', status: 'merged', repo: 'backend-api', reviews: 3, time: '2h ago' },
+        { number: 1846, title: 'Fix memory leak in data processor', author: 'mike-chen', avatar: 'MC', status: 'open', repo: 'data-pipeline', reviews: 1, time: '5h ago' },
+        { number: 1845, title: 'Update dependencies to latest versions', author: 'alex-kim', avatar: 'AK', status: 'merged', repo: 'frontend-app', reviews: 2, time: '1d ago' },
+        { number: 1844, title: 'Implement dark mode toggle', author: 'emma-wilson', avatar: 'EW', status: 'open', repo: 'ui-components', reviews: 4, time: '1d ago' },
+        { number: 1843, title: 'Optimize database queries', author: 'john-smith', avatar: 'JS', status: 'merged', repo: 'backend-api', reviews: 2, time: '2d ago' },
+    ];
+    
+    tb.innerHTML = dummyPRs.map(pr => {
+        const sc = pr.status === 'merged' ? 'healthy' : 'warning';
+        const st = pr.status === 'merged' ? '● Merged' : '● Open';
+        return `<tr>
+            <td><div class="pr-title">#${pr.number} — ${esc(pr.title)}</div><div class="pr-meta">${pr.repo}</div></td>
+            <td><div class="pr-author"><div style="width:22px;height:22px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600">${pr.avatar}</div> ${esc(pr.author)}</div></td>
+            <td><span class="status-badge ${sc}">${st}</span></td>
+            <td>${pr.reviews} reviews</td>
+            <td>${pr.time}</td>
+        </tr>`;
+    }).join('');
+}
+
+function loadDummyReposTable() {
+    const tb = document.getElementById('repos-tbody'); if (!tb) return;
+    const dummyRepos = [
+        { name: 'backend-api', status: 'healthy', language: 'Python', stars: 234, forks: 45, issues: 8 },
+        { name: 'frontend-app', status: 'healthy', language: 'TypeScript', stars: 189, forks: 32, issues: 12 },
+        { name: 'data-pipeline', status: 'warning', language: 'Python', stars: 156, forks: 28, issues: 23 },
+        { name: 'ui-components', status: 'healthy', language: 'JavaScript', stars: 312, forks: 67, issues: 5 },
+        { name: 'mobile-app', status: 'healthy', language: 'Dart', stars: 445, forks: 89, issues: 15 },
+        { name: 'analytics-service', status: 'warning', language: 'Go', stars: 98, forks: 19, issues: 31 },
+        { name: 'auth-service', status: 'healthy', language: 'Node.js', stars: 267, forks: 54, issues: 7 },
+    ];
+    
+    tb.innerHTML = dummyRepos.map(r => {
+        const h = r.status;
+        return `<tr>
+            <td><span class="repo-name">📁 ${esc(r.name)}</span></td>
+            <td><span class="status-badge ${h}">● ${h[0].toUpperCase() + h.slice(1)}</span></td>
+            <td>${r.language}</td>
+            <td>⭐ ${r.stars} 🍴 ${r.forks}</td>
+            <td>${r.issues} open</td>
+        </tr>`;
+    }).join('');
+}
+
+function loadDummyActivityFeed() {
+    const f = document.getElementById('activity-feed-body'); if (!f) return;
+    const dummyActivity = [
+        { actor: 'sarah-dev', avatar: 'SD', action: 'merged', detail: 'PR #1847 — auth module', time: '2m ago' },
+        { actor: 'mike-chen', avatar: 'MC', action: 'opened', detail: 'PR #1846 — memory fix', time: '14m ago' },
+        { actor: 'alex-kim', avatar: 'AK', action: 'reviewed', detail: 'PR #1845 — dependencies', time: '1h ago' },
+        { actor: 'emma-wilson', avatar: 'EW', action: 'commented on', detail: 'issue #234', time: '2h ago' },
+        { actor: 'john-smith', avatar: 'JS', action: 'pushed', detail: '3 commits to main', time: '3h ago' },
+        { actor: 'lisa-park', avatar: 'LP', action: 'created', detail: 'branch feature/api-v2', time: '4h ago' },
+        { actor: 'david-lee', avatar: 'DL', action: 'closed', detail: 'issue #231', time: '5h ago' },
+        { actor: 'rachel-brown', avatar: 'RB', action: 'starred', detail: 'ui-components', time: '6h ago' },
+    ];
+    
+    f.innerHTML = dummyActivity.map(e => `
+        <div class="feed-item">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0">${e.avatar}</div>
+            <div class="feed-body">
+                <div class="feed-action"><strong>${esc(e.actor)}</strong> ${esc(e.action)} <span class="highlight">${esc(e.detail)}</span></div>
+                <div class="feed-time">${e.time}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function loadDummyCharts() {
+    if (typeof Chart === 'undefined') return;
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#9ca3af';
+    Chart.defaults.plugins.legend.display = false;
+    
+    // Velocity Chart
+    const velocityCtx = document.getElementById('velocityChart');
+    if (velocityCtx) {
+        new Chart(velocityCtx, {
+            type: 'line',
+            data: {
+                labels: ['Feb 20', 'Feb 21', 'Feb 22', 'Feb 23', 'Feb 24', 'Feb 25', 'Feb 26', 'Feb 27'],
+                datasets: [{
+                    data: [8, 12, 9, 15, 11, 14, 10, 13],
+                    borderColor: '#18181b',
+                    backgroundColor: 'rgba(24,24,27,.04)',
+                    borderWidth: 2.5,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#18181b',
+                    fill: true,
+                    tension: .3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true, grid: { color: '#f0eeea' } }
+                }
+            }
+        });
+    }
+    
+    // Team Chart
+    const teamCtx = document.getElementById('teamChart');
+    if (teamCtx) {
+        new Chart(teamCtx, {
+            type: 'bar',
+            data: {
+                labels: ['sarah-dev', 'mike-chen', 'alex-kim', 'emma-wilson', 'john-smith'],
+                datasets: [{
+                    data: [145, 128, 112, 98, 87],
+                    backgroundColor: '#18181b',
+                    borderRadius: 4,
+                    barThickness: 18
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { color: '#f0eeea' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+    }
 }
 
 async function loadMetrics() {
@@ -227,10 +389,10 @@ function initAgentButtons() {
     document.getElementById('pri-run')?.addEventListener('click', runPRIntelligence);
     // Assignee Recommender
     document.getElementById('ar-run')?.addEventListener('click', runAssigneeRecommender);
-    // Reviewer Recommender
-    document.getElementById('rr-run')?.addEventListener('click', runReviewerRecommender);
     // Workload Analyzer
     document.getElementById('wa-run')?.addEventListener('click', runWorkloadAnalyzer);
+    // Repository Analyzer
+    document.getElementById('ra-run')?.addEventListener('click', runRepositoryAnalyzer);
 }
 
 function agentLoading(container) {
@@ -243,7 +405,24 @@ function agentLoading(container) {
 }
 
 function agentError(container, msg) {
-    container.innerHTML = `<div class="result-card" style="border-color:var(--danger)"><div class="result-body" style="color:var(--danger)">❌ ${esc(msg)}</div></div>`;
+    // Clean up error message for better display
+    let cleanMsg = msg;
+    if (msg.includes('404')) {
+        cleanMsg = 'Repository not found. Please check the owner/repo name and ensure it exists on GitHub.';
+    } else if (msg.includes('403')) {
+        cleanMsg = 'Access forbidden. The repository may be private or your token lacks permissions.';
+    } else if (msg.includes('401')) {
+        cleanMsg = 'Authentication failed. Please check your GitHub token in Settings.';
+    } else if (msg.includes('500')) {
+        cleanMsg = 'Server error. Please try again or check the backend logs.';
+    }
+    container.innerHTML = `<div class="result-card" style="border-color:var(--danger);padding:20px">
+        <div class="result-body" style="color:var(--danger)">
+            <strong>❌ Error</strong><br>
+            <span style="font-size:14px;margin-top:8px;display:block">${esc(cleanMsg)}</span>
+            ${msg.includes('404') ? '<br><span style="font-size:12px;color:var(--text-tertiary)">💡 Tip: Make sure the repository exists and is public, or that your token has access to private repos.</span>' : ''}
+        </div>
+    </div>`;
 }
 
 // ---- Issue Classifier ----
@@ -368,45 +547,6 @@ async function runAssigneeRecommender() {
     }
 }
 
-// ---- Reviewer Recommender ----
-async function runReviewerRecommender() {
-    const repo = parseRepo(document.getElementById('rr-repo').value);
-    const results = document.getElementById('rr-results');
-    if (!repo) return agentError(results, 'Please enter a valid repo: owner/repo or GitHub URL');
-
-    const btn = document.getElementById('rr-run');
-    btn.disabled = true; btn.textContent = '⏳ Analyzing…';
-    agentLoading(results);
-
-    try {
-        const data = await apiAI('/api/ai/analyze-prs', repo);
-        if (!data.reviewer_recommendations?.length) {
-            showEmpty(results, 'No PRs to recommend reviewers for.');
-            return;
-        }
-        results.innerHTML = `<div style="font-size:13px;color:var(--text-tertiary);margin-bottom:4px">Reviewer recommendations for <strong>${esc(data.repo)}</strong></div>` +
-            data.reviewer_recommendations.map(rec => `
-        <div class="result-card">
-          <div class="result-card-title" style="margin-bottom:10px"><span class="issue-num">#${rec.pr_number}</span> ${esc(rec.pr_title)}</div>
-          <div class="candidate-list">
-            ${rec.suggested_reviewers.map(r => `
-              <div class="candidate-item">
-                <div class="candidate-avatar">${(r.developer_name || '??').substring(0, 2).toUpperCase()}</div>
-                <div class="candidate-info">
-                  <div class="candidate-name">${esc(r.developer_name)}</div>
-                  <div class="candidate-reasoning">${esc(r.reasoning)}</div>
-                </div>
-                <div class="candidate-score">${Math.round(r.confidence_score)}</div>
-              </div>`).join('')}
-          </div>
-        </div>`).join('');
-    } catch (e) {
-        agentError(results, e.message);
-    } finally {
-        btn.disabled = false; btn.textContent = '🚀 Find Reviewers';
-    }
-}
-
 // ---- Workload Analyzer ----
 async function runWorkloadAnalyzer() {
     const repo = parseRepo(document.getElementById('wa-repo').value);
@@ -468,3 +608,132 @@ document.addEventListener('click', e => {
         r.style.display = (f === 'all' || t.includes(f)) ? '' : 'none';
     });
 });
+
+
+// ---- Repository Analyzer ----
+async function runRepositoryAnalyzer() {
+    const repo = parseRepo(document.getElementById('ra-repo').value);
+    const results = document.getElementById('ra-results');
+    if (!repo) return agentError(results, 'Please enter a valid repo: owner/repo or GitHub URL');
+
+    const btn = document.getElementById('ra-run');
+    btn.disabled = true; btn.textContent = '⏳ Analyzing…';
+    agentLoading(results);
+
+    try {
+        const data = await apiAI('/api/ai/analyze-repository', repo);
+        const info = data.repository_info;
+        const analysis = data.analysis;
+
+        results.innerHTML = `
+      <div class="result-card" style="margin-bottom:16px">
+        <div class="result-card-header" style="border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:12px">
+          <div>
+            <div class="result-card-title" style="font-size:18px;margin-bottom:6px">
+              📦 ${esc(info.name)}
+            </div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">${esc(info.description || 'No description')}</div>
+            <div style="display:flex;gap:12px;font-size:12px;color:var(--text-tertiary)">
+              <span>⭐ ${info.stars} stars</span>
+              <span>🍴 ${info.forks} forks</span>
+              <span>👁️ ${info.watchers} watchers</span>
+              <span>🐛 ${info.open_issues} issues</span>
+            </div>
+          </div>
+        </div>
+        <div class="result-body">
+          <div class="result-row">
+            <span class="result-label">Language:</span> ${esc(info.language)}
+          </div>
+          <div class="result-row">
+            <span class="result-label">License:</span> ${esc(info.license)}
+          </div>
+          <div class="result-row">
+            <span class="result-label">Repository:</span> <a href="${esc(info.url)}" target="_blank" style="color:var(--primary)">${esc(info.url)}</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-card-title" style="margin-bottom:12px">📝 Overview</div>
+        <div class="result-body">
+          <p style="line-height:1.6;color:var(--text-secondary)">${esc(analysis.overview)}</p>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-card-title" style="margin-bottom:12px">✨ Key Features</div>
+        <div class="result-body">
+          <ul class="checklist">
+            ${analysis.key_features.map(f => `<li>${esc(f)}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-card-title" style="margin-bottom:12px">🛠️ Technology Stack</div>
+        <div class="result-body">
+          <div class="result-labels-list">
+            ${(analysis.technology_stack && analysis.technology_stack.length > 0) 
+              ? analysis.technology_stack.map(t => `<span class="result-label-tag" style="background:var(--primary);color:white">${esc(t)}</span>`).join('')
+              : '<span style="color:var(--text-tertiary)">No technology stack detected</span>'}
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-card-title" style="margin-bottom:12px">🏗️ Architecture Insights</div>
+        <div class="result-body">
+          <p style="line-height:1.6;color:var(--text-secondary)">${esc(analysis.architecture_insights)}</p>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-card-title" style="margin-bottom:12px">📊 Code Quality Indicators</div>
+        <div class="result-body">
+          <table class="workload-table" style="width:100%">
+            <tbody>
+              <tr>
+                <td><strong>Repository Size</strong></td>
+                <td>${esc(analysis.code_quality_indicators.repository_size)}</td>
+              </tr>
+              <tr>
+                <td><strong>Community Engagement</strong></td>
+                <td><span class="status-badge ${analysis.code_quality_indicators.community_engagement.toLowerCase() === 'high' ? 'healthy' : 'warning'}">${esc(analysis.code_quality_indicators.community_engagement)}</span></td>
+              </tr>
+              <tr>
+                <td><strong>Maintenance Status</strong></td>
+                <td><span class="status-badge ${analysis.code_quality_indicators.maintenance_status.toLowerCase().includes('active') ? 'healthy' : 'warning'}">${esc(analysis.code_quality_indicators.maintenance_status)}</span></td>
+              </tr>
+              <tr>
+                <td><strong>Documentation</strong></td>
+                <td>${esc(analysis.code_quality_indicators.documentation)}</td>
+              </tr>
+              <tr>
+                <td><strong>License</strong></td>
+                <td>${esc(analysis.code_quality_indicators.license)}</td>
+              </tr>
+              <tr>
+                <td><strong>Contributors</strong></td>
+                <td>${analysis.code_quality_indicators.contributors}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-card-title" style="margin-bottom:12px">💡 Recommendations</div>
+        <div class="result-body">
+          <ul class="checklist">
+            ${analysis.recommendations.map(r => `<li>${esc(r)}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+    `;
+    } catch (e) {
+        agentError(results, e.message);
+    } finally {
+        btn.disabled = false; btn.textContent = '🚀 Analyze Repository';
+    }
+}

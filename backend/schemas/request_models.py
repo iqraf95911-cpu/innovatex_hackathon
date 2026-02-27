@@ -16,3 +16,9 @@ class AnalyzePRsRequest(BaseModel):
 class AnalyzeWorkloadRequest(BaseModel):
     owner: str
     repo: str
+
+
+
+class AnalyzeRepositoryRequest(BaseModel):
+    owner: str
+    repo: str
