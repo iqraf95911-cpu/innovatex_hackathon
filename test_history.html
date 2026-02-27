@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test History</title>
+</head>
+<body>
+    <h1>History Test</h1>
+    <button onclick="testSave()">Test Save to History</button>
+    <button onclick="testLoad()">Test Load History</button>
+    <button onclick="testClear()">Clear History</button>
+    <div id="output"></div>
+
+    <script>
+        function saveToHistory(agentName, repository, timestamp = new Date().toISOString()) {
+            console.log('Saving to history:', agentName, repository);
+            const historyStr = localStorage.getItem('devIntelHistory');
+            const history = historyStr ? JSON.parse(historyStr) : [];
+            
+            const entry = {
+                id: Date.now(),
+                agent: agentName,
+                repository: repository,
+                timestamp: timestamp,
+                user: 'TestUser'
+            };
+            history.unshift(entry);
+            if (history.length > 50) history.length = 50;
+            localStorage.setItem('devIntelHistory', JSON.stringify(history));
+            console.log('History saved. Total entries:', history.length);
+            return history.length;
+        }
+
+        function testSave() {
+            const count = saveToHistory('Test Agent', 'facebook/react');
+            document.getElementById('output').innerHTML = `<p>Saved! Total entries: ${count}</p>`;
+        }
+
+        function testLoad() {
+            const historyStr = localStorage.getItem('devIntelHistory');
+            const history = historyStr ? JSON.parse(historyStr) : [];
+            document.getElementById('output').innerHTML = `<pre>${JSON.stringify(history, null, 2)}</pre>`;
+        }
+
+        function testClear() {
+            localStorage.removeItem('devIntelHistory');
+            document.getElementById('output').innerHTML = `<p>History cleared!</p>`;
+        }
+    </script>
+</body>
+</html>

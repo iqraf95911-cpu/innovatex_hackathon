@@ -3,7 +3,217 @@
 const AI_API = 'http://localhost:8000';  // FastAPI backend
 const GH_API = '';  // Express backend (same origin)
 
+// ========== LOAD LOGGED IN USER ==========
+
+function loadLoggedInUser() {
+    const userDataStr = localStorage.getItem('devIntelUser');
+    if (userDataStr) {
+        try {
+            const userData = JSON.parse(userDataStr);
+            const sidebar = document.querySelector('.sidebar-user');
+            if (sidebar) {
+                // Update user name
+                const nameEl = sidebar.querySelector('.name');
+                if (nameEl) {
+                    nameEl.textContent = userData.name || userData.userId;
+                }
+                
+                // Update user role/email
+                const roleEl = sidebar.querySelector('.role');
+                if (roleEl) {
+                    roleEl.textContent = userData.email || userData.userId;
+                }
+                
+                // Update avatar with initials
+                const avatarEl = sidebar.querySelector('.user-avatar');
+                if (avatarEl) {
+                    const initials = (userData.name || userData.userId).substring(0, 2).toUpperCase();
+                    avatarEl.textContent = initials;
+                }
+            }
+        } catch (e) {
+            console.error('Error loading user data:', e);
+        }
+    }
+}
+
+// ========== HISTORY MANAGEMENT ==========
+
+function saveToHistory(agentName, repository, timestamp = new Date().toISOString()) {
+    try {
+        console.log('=== SAVE TO HISTORY ===');
+        console.log('Agent:', agentName);
+        console.log('Repository:', repository);
+        console.log('Timestamp:', timestamp);
+        
+        const history = getHistory();
+        console.log('Current history length:', history.length);
+        
+        const entry = {
+            id: Date.now(),
+            agent: agentName,
+            repository: repository,
+            timestamp: timestamp,
+            user: getUserName()
+        };
+        
+        console.log('New entry:', entry);
+        
+        history.unshift(entry); // Add to beginning
+        
+        // Keep only last 50 entries
+        if (history.length > 50) history.length = 50;
+        
+        const historyJson = JSON.stringify(history);
+        console.log('Saving to localStorage, size:', historyJson.length, 'bytes');
+        
+        localStorage.setItem('devIntelHistory', historyJson);
+        
+        // Verify it was saved
+        const saved = localStorage.getItem('devIntelHistory');
+        console.log('Verification - saved successfully:', saved !== null);
+        console.log('New history length:', history.length);
+        console.log('======================');
+    } catch (error) {
+        console.error('ERROR saving to history:', error);
+    }
+}
+
+function getHistory() {
+    const historyStr = localStorage.getItem('devIntelHistory');
+    return historyStr ? JSON.parse(historyStr) : [];
+}
+
+function clearHistory() {
+    localStorage.removeItem('devIntelHistory');
+    loadHistoryPanel();
+}
+
+function getUserName() {
+    const userDataStr = localStorage.getItem('devIntelUser');
+    if (userDataStr) {
+        const userData = JSON.parse(userDataStr);
+        return userData.name || userData.userId || 'Unknown';
+    }
+    return 'Guest';
+}
+
+function loadHistoryPanel() {
+    try {
+        console.log('=== LOAD HISTORY PANEL ===');
+        const history = getHistory();
+        console.log('History entries:', history.length);
+        console.log('History data:', history);
+        
+        const countEl = document.getElementById('history-count');
+        const resultsEl = document.getElementById('history-results');
+        
+        console.log('Count element found:', countEl !== null);
+        console.log('Results element found:', resultsEl !== null);
+        
+        if (!resultsEl) {
+            console.error('ERROR: history-results element not found!');
+            return;
+        }
+        
+        if (countEl) countEl.textContent = history.length;
+        
+        if (history.length === 0) {
+            console.log('No history, showing empty state');
+            resultsEl.innerHTML = `
+                <div class="empty-state" style="padding:60px 20px">
+                    <div style="font-size:48px;margin-bottom:16px">📭</div>
+                    <div style="font-size:15px;color:var(--text-secondary);margin-bottom:8px">No history yet</div>
+                    <div style="font-size:13px;color:var(--text-tertiary)">Start analyzing repositories to see your history here</div>
+                </div>`;
+            console.log('=========================');
+            return;
+        }
+        
+        console.log('Rendering', history.length, 'history entries');
+        
+        resultsEl.innerHTML = history.map(entry => {
+            const date = new Date(entry.timestamp);
+            const timeStr = timeAgo(entry.timestamp);
+            const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+            
+            const agentIcons = {
+                'Repository Analyzer': '📦',
+                'Issue Classifier': '🏷️',
+                'PR Intelligence': '🔍',
+                'Assignee Recommender': '👤',
+                'Workload Analyzer': '⚖️',
+                'Test Agent': '🧪'
+            };
+            
+            const icon = agentIcons[entry.agent] || '🤖';
+            
+            return `
+                <div class="result-card">
+                    <div style="display:flex;gap:16px;align-items:flex-start">
+                        <div style="font-size:32px;line-height:1">${icon}</div>
+                        <div style="flex:1;overflow:hidden">
+                            <div style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text-primary)">
+                                ${esc(entry.agent)}
+                            </div>
+                            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;overflow-wrap:break-word">
+                                📁 ${esc(entry.repository)}
+                            </div>
+                            <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-tertiary)">
+                                <span>👤 ${esc(entry.user)}</span>
+                                <span>🕒 ${timeStr}</span>
+                                <span>📅 ${dateStr}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+        
+        console.log('History rendered successfully');
+        console.log('=========================');
+    } catch (error) {
+        console.error('ERROR loading history panel:', error);
+    }
+}
+
+function initHistory() {
+    const clearBtn = document.getElementById('clear-history-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all history?')) {
+                clearHistory();
+            }
+        });
+    }
+    
+    // Test button to manually add a history entry
+    const testBtn = document.getElementById('test-history-btn');
+    if (testBtn) {
+        testBtn.addEventListener('click', () => {
+            console.log('Test button clicked');
+            saveToHistory('Test Agent', 'facebook/react');
+            alert('Test entry added! Reloading history...');
+            loadHistoryPanel();
+        });
+    }
+}
+
+function initLogout() {
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            // Clear user data from localStorage
+            localStorage.removeItem('devIntelUser');
+            // Redirect to login page
+            window.location.href = 'login.html';
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    loadLoggedInUser();
+    initLogout();
+    initHistory();
     initNavigation();
     initAgentButtons();
     initDashboard();
@@ -18,6 +228,7 @@ const panelTitles = {
     'assignee-recommender': ['Assignee Recommender', '/ AI Agent'],
     'workload-analyzer': ['Workload Analyzer', '/ AI Agent'],
     'repository-analyzer': ['Repository Analyzer', '/ AI Agent'],
+    'history': ['Analysis History', '/ History'],
 };
 
 function switchPanel(panelId) {
@@ -30,6 +241,11 @@ function switchPanel(panelId) {
     const titles = panelTitles[panelId] || ['Dashboard', '/ Overview'];
     document.getElementById('page-title').textContent = titles[0];
     document.getElementById('page-breadcrumb').textContent = titles[1];
+    
+    // Load history when history panel is shown
+    if (panelId === 'history') {
+        loadHistoryPanel();
+    }
 }
 
 function initNavigation() {
@@ -123,14 +339,18 @@ async function initDashboard() {
         const status = await apiGH('/api/settings/token-status');
         if (!status.connected) { 
             showTokenBanner(); 
-            return; // Keep dummy data
+            return; // Keep dummy data and logged-in user info
         }
         const u = status.user;
         const sidebar = document.querySelector('.sidebar-user');
         if (sidebar) {
-            sidebar.querySelector('.name').textContent = u.name || u.login;
-            sidebar.querySelector('.role').textContent = '@' + u.login;
-            sidebar.querySelector('.user-avatar').textContent = (u.login || '??').substring(0, 2).toUpperCase();
+            // Only update if we have GitHub user data AND no logged-in user from login page
+            const userDataStr = localStorage.getItem('devIntelUser');
+            if (!userDataStr) {
+                sidebar.querySelector('.name').textContent = u.name || u.login;
+                sidebar.querySelector('.role').textContent = '@' + u.login;
+                sidebar.querySelector('.user-avatar').textContent = (u.login || '??').substring(0, 2).toUpperCase();
+            }
         }
         
         // Load real data
@@ -140,7 +360,7 @@ async function initDashboard() {
         loadActivityFeed();
         loadCharts();
     } catch (e) { 
-        // Keep dummy data on error
+        // Keep dummy data and logged-in user info on error
         return; 
     }
 }
@@ -437,6 +657,10 @@ async function runIssueClassifier() {
 
     try {
         const data = await apiAI('/api/ai/analyze-issues', repo);
+        
+        // Save to history immediately after successful API call
+        saveToHistory('Issue Classifier', `${repo.owner}/${repo.repo}`);
+        
         if (!data.classifications?.length) {
             showEmpty(results, 'No open issues found in this repository.');
             return;
@@ -481,6 +705,10 @@ async function runPRIntelligence() {
 
     try {
         const data = await apiAI('/api/ai/analyze-prs', repo);
+        
+        // Save to history immediately after successful API call
+        saveToHistory('PR Intelligence', `${repo.owner}/${repo.repo}`);
+        
         if (!data.pr_intelligence?.length) {
             showEmpty(results, 'No pull requests found.');
             return;
@@ -520,6 +748,10 @@ async function runAssigneeRecommender() {
 
     try {
         const data = await apiAI('/api/ai/analyze-issues', repo);
+        
+        // Save to history immediately after successful API call
+        saveToHistory('Assignee Recommender', `${repo.owner}/${repo.repo}`);
+        
         if (!data.assignee_recommendations?.length) {
             showEmpty(results, 'No issues to recommend assignees for.');
             return;
@@ -559,6 +791,10 @@ async function runWorkloadAnalyzer() {
 
     try {
         const data = await apiAI('/api/ai/analyze-workload', repo);
+        
+        // Save to history immediately after successful API call
+        saveToHistory('Workload Analyzer', `${repo.owner}/${repo.repo}`);
+        
         const wl = data.analysis;
         if (!wl.developer_workload?.length) {
             showEmpty(results, 'No workload data found.');
@@ -622,6 +858,10 @@ async function runRepositoryAnalyzer() {
 
     try {
         const data = await apiAI('/api/ai/analyze-repository', repo);
+        
+        // Save to history immediately after successful API call
+        saveToHistory('Repository Analyzer', `${repo.owner}/${repo.repo}`);
+        
         const info = data.repository_info;
         const analysis = data.analysis;
 

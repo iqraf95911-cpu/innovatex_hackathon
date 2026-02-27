@@ -47,6 +47,9 @@
                 </a>
 
                 <span class="nav-section-label">Manage</span>
+                <a class="nav-item" data-panel="history" id="nav-history">
+                    <span class="nav-icon">📜</span> History
+                </a>
                 <a class="nav-item" href="settings.html" id="nav-settings" target="_self">
                     <span class="nav-icon">⚙️</span> Settings
                 </a>
@@ -80,6 +83,8 @@
                     </div>
                     <a href="settings.html" class="btn-secondary"
                         style="padding: 8px 16px; border-radius: 8px; font-size: 12px;">⚙️ Settings</a>
+                    <button class="btn-secondary" id="logout-btn"
+                        style="padding: 8px 16px; border-radius: 8px; font-size: 12px;">🚪 Logout</button>
                 </div>
             </header>
 
@@ -191,7 +196,7 @@
                     </div>
                     <div class="agent-input-group">
                         <input type="text" class="agent-repo-input" id="ra-repo"
-                            placeholder="owner/repo (e.g. facebook/react)">
+                            placeholder="owner/repo (e.g. facebook/react)" autocomplete="off">
                         <button class="btn-primary agent-run-btn" id="ra-run" style="border-radius:10px">🚀 Analyze
                             Repository</button>
                     </div>
@@ -212,7 +217,7 @@
                     </div>
                     <div class="agent-input-group">
                         <input type="text" class="agent-repo-input" id="ic-repo"
-                            placeholder="owner/repo (e.g. facebook/react)">
+                            placeholder="owner/repo (e.g. facebook/react)" autocomplete="off">
                         <button class="btn-primary agent-run-btn" id="ic-run" style="border-radius:10px">🚀 Analyze
                             Issues</button>
                     </div>
@@ -233,7 +238,7 @@
                     </div>
                     <div class="agent-input-group">
                         <input type="text" class="agent-repo-input" id="pri-repo"
-                            placeholder="owner/repo (e.g. facebook/react)">
+                            placeholder="owner/repo (e.g. facebook/react)" autocomplete="off">
                         <button class="btn-primary agent-run-btn" id="pri-run" style="border-radius:10px">🚀 Analyze
                             PRs</button>
                     </div>
@@ -254,7 +259,7 @@
                     </div>
                     <div class="agent-input-group">
                         <input type="text" class="agent-repo-input" id="ar-repo"
-                            placeholder="owner/repo (e.g. facebook/react)">
+                            placeholder="owner/repo (e.g. facebook/react)" autocomplete="off">
                         <button class="btn-primary agent-run-btn" id="ar-run" style="border-radius:10px">🚀 Find
                             Assignees</button>
                     </div>
@@ -275,7 +280,7 @@
                     </div>
                     <div class="agent-input-group">
                         <input type="text" class="agent-repo-input" id="wa-repo"
-                            placeholder="owner/repo (e.g. facebook/react)">
+                            placeholder="owner/repo (e.g. facebook/react)" autocomplete="off">
                         <button class="btn-primary agent-run-btn" id="wa-run" style="border-radius:10px">🚀 Analyze
                             Workload</button>
                     </div>
@@ -290,3 +295,41 @@
 </body>
 
 </html>
+
+<!-- ============ PANEL: History ============ -->
+<div class="dashboard-content panel-content" id="panel-history" style="display:none">
+    <div class="agent-panel" style="max-width:1000px">
+        <div class="agent-header">
+            <div class="agent-icon-large">📜</div>
+            <div>
+                <h3>Analysis History</h3>
+                <p class="agent-desc">View your recent repository analyses and agent usage history.</p>
+            </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <div style="font-size:13px;color:var(--text-tertiary)">
+                <span id="history-count">0</span> analyses in history
+            </div>
+            <div style="display:flex;gap:8px">
+                <button class="btn-secondary" id="test-history-btn"
+                    style="padding:8px 16px;border-radius:8px;font-size:12px">
+                    🧪 Test Add Entry
+                </button>
+                <button class="btn-secondary" id="clear-history-btn"
+                    style="padding:8px 16px;border-radius:8px;font-size:12px">
+                    🗑️ Clear History
+                </button>
+            </div>
+        </div>
+
+        <div id="history-results">
+            <div class="empty-state" style="padding:60px 20px">
+                <div style="font-size:48px;margin-bottom:16px">📭</div>
+                <div style="font-size:15px;color:var(--text-secondary);margin-bottom:8px">No history yet</div>
+                <div style="font-size:13px;color:var(--text-tertiary)">Start analyzing repositories to see your history here</div>
+            </div>
+        </div>
+    </div>
+</div>
+

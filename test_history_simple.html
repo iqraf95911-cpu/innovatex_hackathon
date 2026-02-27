@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple History Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        button { padding: 10px 20px; margin: 5px; }
+        #output { margin-top: 20px; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>History Test</h1>
+    
+    <button onclick="testSave()">1. Save Test Entry</button>
+    <button onclick="testLoad()">2. Load History</button>
+    <button onclick="testClear()">3. Clear History</button>
+    <button onclick="checkLocalStorage()">4. Check localStorage</button>
+    
+    <div id="output"></div>
+
+    <script>
+        function testSave() {
+            console.log('Testing save...');
+            const history = JSON.parse(localStorage.getItem('devIntelHistory') || '[]');
+            
+            const entry = {
+                id: Date.now(),
+                agent: 'Test Agent',
+                repository: 'facebook/react',
+                timestamp: new Date().toISOString(),
+                user: 'TestUser'
+            };
+            
+            history.unshift(entry);
+            localStorage.setItem('devIntelHistory', JSON.stringify(history));
+            
+            document.getElementById('output').innerHTML = 
+                `<strong>✅ Saved!</strong><br>Total entries: ${history.length}<br><pre>${JSON.stringify(entry, null, 2)}</pre>`;
+        }
+
+        function testLoad() {
+            console.log('Testing load...');
+            const history = JSON.parse(localStorage.getItem('devIntelHistory') || '[]');
+            
+            document.getElementById('output').innerHTML = 
+                `<strong>History (${history.length} entries):</strong><br><pre>${JSON.stringify(history, null, 2)}</pre>`;
+        }
+
+        function testClear() {
+            localStorage.removeItem('devIntelHistory');
+            document.getElementById('output').innerHTML = '<strong>✅ History cleared!</strong>';
+        }
+
+        function checkLocalStorage() {
+            const keys = Object.keys(localStorage);
+            const output = keys.map(key => {
+                const value = localStorage.getItem(key);
+                return `<strong>${key}:</strong> ${value.substring(0, 100)}${value.length > 100 ? '...' : ''}`;
+            }).join('<br>');
+            
+            document.getElementById('output').innerHTML = 
+                `<strong>localStorage keys (${keys.length}):</strong><br>${output || 'Empty'}`;
+        }
+    </script>
+</body>
+</html>
