@@ -1,0 +1,13 @@
+{
+  "name": "devintel-ai",
+  "version": "1.0.0",
+  "description": "DevIntel AI — Autonomous Dev Productivity Assistant",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

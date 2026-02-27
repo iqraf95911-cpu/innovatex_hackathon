@@ -25,42 +25,42 @@
 
             <nav class="sidebar-nav">
                 <span class="nav-section-label">Overview</span>
-                <a class="nav-item active" id="nav-dashboard">
+                <a class="nav-item active" href="dashboard.html" id="nav-dashboard">
                     <span class="nav-icon">📊</span> Dashboard
                 </a>
-                <a class="nav-item" id="nav-repositories">
+                <a class="nav-item" href="dashboard.html" id="nav-repositories">
                     <span class="nav-icon">📁</span> Repositories
                 </a>
-                <a class="nav-item" id="nav-prs">
+                <a class="nav-item" href="dashboard.html" id="nav-prs">
                     <span class="nav-icon">🔀</span> Pull Requests
                 </a>
 
                 <span class="nav-section-label">Analytics</span>
-                <a class="nav-item" id="nav-sprints">
+                <a class="nav-item" href="dashboard.html" id="nav-sprints">
                     <span class="nav-icon">🏃</span> Sprints
                 </a>
-                <a class="nav-item" id="nav-team">
+                <a class="nav-item" href="dashboard.html" id="nav-team">
                     <span class="nav-icon">👥</span> Team
                 </a>
-                <a class="nav-item" id="nav-insights">
+                <a class="nav-item" href="dashboard.html" id="nav-insights">
                     <span class="nav-icon">💡</span> AI Insights
                 </a>
 
                 <span class="nav-section-label">Manage</span>
-                <a class="nav-item" id="nav-integrations">
+                <a class="nav-item" href="dashboard.html" id="nav-integrations">
                     <span class="nav-icon">🔗</span> Integrations
                 </a>
-                <a class="nav-item" id="nav-settings">
+                <a class="nav-item" href="settings.html" id="nav-settings">
                     <span class="nav-icon">⚙️</span> Settings
                 </a>
             </nav>
 
             <div class="sidebar-footer">
                 <div class="sidebar-user">
-                    <div class="user-avatar">FM</div>
+                    <div class="user-avatar">—</div>
                     <div class="user-info">
-                        <div class="name">Faiz M.</div>
-                        <div class="role">Engineering Lead</div>
+                        <div class="name">Loading…</div>
+                        <div class="role">—</div>
                     </div>
                 </div>
             </div>
@@ -81,13 +81,8 @@
                         <input type="text" placeholder="Search repos, PRs, team…" id="search-input">
                         <kbd>⌘K</kbd>
                     </div>
-                    <button class="date-range" id="date-range">
-                        📅 Last 30 days ▾
-                    </button>
-                    <button class="topbar-btn" id="btn-notifications" title="Notifications">
-                        🔔
-                        <span class="badge"></span>
-                    </button>
+                    <a href="settings.html" class="btn-secondary"
+                        style="padding: 8px 16px; border-radius: 8px; font-size: 12px;">⚙️ Settings</a>
                 </div>
             </header>
 
@@ -97,48 +92,27 @@
                 <!-- ── Metric Cards ── -->
                 <div class="section-header">
                     <h3>Key Metrics</h3>
-                    <span class="view-all">This sprint · Sprint 23</span>
+                    <span class="view-all">Live from GitHub</span>
                 </div>
 
                 <div class="metrics-grid" id="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label"><span class="metric-icon">📁</span> Repos Analyzed</div>
-                        <div class="metric-value">24</div>
-                        <div class="metric-change positive">↑ 3 new this week</div>
-                        <div class="metric-sub">Across 4 teams</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label"><span class="metric-icon">⏱️</span> Avg PR Cycle Time</div>
-                        <div class="metric-value">4.2h</div>
-                        <div class="metric-change positive">↑ 18% faster vs last sprint</div>
-                        <div class="metric-sub">Target: &lt; 6h</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label"><span class="metric-icon">🚀</span> Sprint Velocity</div>
-                        <div class="metric-value">61 pts</div>
-                        <div class="metric-change positive">↑ 11% improvement</div>
-                        <div class="metric-sub">Planned: 55 pts</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label"><span class="metric-icon">✅</span> Code Review Score</div>
-                        <div class="metric-value">92</div>
-                        <div class="metric-change negative">↓ 2 pts from last sprint</div>
-                        <div class="metric-sub">Benchmark: 90</div>
+                    <div class="loading-state">
+                        <div class="spinner"></div><br>Loading metrics…
                     </div>
                 </div>
 
                 <!-- ── Charts ── -->
                 <div class="charts-grid">
                     <div class="chart-card">
-                        <h4>Sprint Velocity</h4>
-                        <p class="chart-subtitle">Story points completed vs planned — last 6 sprints</p>
+                        <h4>Merged PRs Trend</h4>
+                        <p class="chart-subtitle">Recently merged pull requests by date</p>
                         <div class="chart-wrapper">
                             <canvas id="velocityChart"></canvas>
                         </div>
                     </div>
                     <div class="chart-card">
-                        <h4>Team Contribution</h4>
-                        <p class="chart-subtitle">Commits per team member — Sprint 23</p>
+                        <h4>Top Contributors</h4>
+                        <p class="chart-subtitle">Commits in most active repository</p>
                         <div class="chart-wrapper">
                             <canvas id="teamChart"></canvas>
                         </div>
@@ -162,117 +136,14 @@
                                 <th>Author</th>
                                 <th>Status</th>
                                 <th>Cycle Time</th>
-                                <th>Review Score</th>
+                                <th>Reviews</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="prs-tbody">
                             <tr>
-                                <td>
-                                    <div class="pr-title">#415 — Add payment gateway module</div>
-                                    <div class="pr-meta">backend-api · 12 files changed</div>
-                                </td>
-                                <td>
-                                    <div class="pr-author">
-                                        <div class="pr-author-avatar">PS</div>
-                                        Priya S.
-                                    </div>
-                                </td>
-                                <td><span class="status-badge warning">● In Review</span></td>
-                                <td>2.4h</td>
-                                <td>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar">
-                                            <div class="score-bar-fill high" style="width: 88%"></div>
-                                        </div>
-                                        <span class="score-value">88</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="pr-title">#414 — Refactor user auth flow</div>
-                                    <div class="pr-meta">core-service · 8 files changed</div>
-                                </td>
-                                <td>
-                                    <div class="pr-author">
-                                        <div class="pr-author-avatar">DK</div>
-                                        Dev K.
-                                    </div>
-                                </td>
-                                <td><span class="status-badge healthy">● Merged</span></td>
-                                <td>3.1h</td>
-                                <td>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar">
-                                            <div class="score-bar-fill high" style="width: 95%"></div>
-                                        </div>
-                                        <span class="score-value">95</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="pr-title">#413 — Fix dashboard caching bug</div>
-                                    <div class="pr-meta">frontend · 3 files changed</div>
-                                </td>
-                                <td>
-                                    <div class="pr-author">
-                                        <div class="pr-author-avatar">AM</div>
-                                        Arjun M.
-                                    </div>
-                                </td>
-                                <td><span class="status-badge healthy">● Merged</span></td>
-                                <td>1.8h</td>
-                                <td>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar">
-                                            <div class="score-bar-fill high" style="width: 91%"></div>
-                                        </div>
-                                        <span class="score-value">91</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="pr-title">#412 — Upgrade dependencies to v3</div>
-                                    <div class="pr-meta">infra · 22 files changed</div>
-                                </td>
-                                <td>
-                                    <div class="pr-author">
-                                        <div class="pr-author-avatar">SL</div>
-                                        Sara L.
-                                    </div>
-                                </td>
-                                <td><span class="status-badge critical">● Changes Req.</span></td>
-                                <td>6.7h</td>
-                                <td>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar">
-                                            <div class="score-bar-fill medium" style="width: 62%"></div>
-                                        </div>
-                                        <span class="score-value">62</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="pr-title">#411 — Add API rate limiting</div>
-                                    <div class="pr-meta">backend-api · 6 files changed</div>
-                                </td>
-                                <td>
-                                    <div class="pr-author">
-                                        <div class="pr-author-avatar">RP</div>
-                                        Raj P.
-                                    </div>
-                                </td>
-                                <td><span class="status-badge healthy">● Merged</span></td>
-                                <td>4.5h</td>
-                                <td>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar">
-                                            <div class="score-bar-fill high" style="width: 84%"></div>
-                                        </div>
-                                        <span class="score-value">84</span>
+                                <td colspan="5">
+                                    <div class="loading-state">
+                                        <div class="spinner"></div><br>Loading PRs…
                                     </div>
                                 </td>
                             </tr>
@@ -280,152 +151,44 @@
                     </table>
                 </div>
 
-                <!-- ── Bottom Grid: Repo Health + Activity ── -->
+                <!-- ── Bottom Grid: Repos + Activity ── -->
                 <div class="bottom-grid">
 
-                    <!-- Repository Health -->
+                    <!-- Repository List -->
                     <div class="table-card" id="repo-health-table">
                         <div class="table-card-header">
-                            <h4>Repository Health</h4>
-                            <span class="view-all" style="font-size: 12px; color: var(--text-tertiary);">View all
-                                →</span>
+                            <h4>Repositories</h4>
+                            <span class="view-all" style="font-size: 12px; color: var(--text-tertiary);">From your
+                                GitHub</span>
                         </div>
                         <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>Repository</th>
                                     <th>Status</th>
-                                    <th>Coverage</th>
-                                    <th>Tech Debt</th>
+                                    <th>Language</th>
+                                    <th>Stars / Forks</th>
+                                    <th>Issues</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="repos-tbody">
                                 <tr>
-                                    <td><span class="repo-name"><span class="repo-icon">📁</span> backend-api</span>
-                                    </td>
-                                    <td><span class="status-badge healthy">● Healthy</span></td>
-                                    <td>
-                                        <div class="score-bar-container">
-                                            <div class="score-bar">
-                                                <div class="score-bar-fill high" style="width: 87%"></div>
-                                            </div>
-                                            <span class="score-value">87%</span>
+                                    <td colspan="5">
+                                        <div class="loading-state">
+                                            <div class="spinner"></div><br>Loading repos…
                                         </div>
                                     </td>
-                                    <td>Low</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="repo-name"><span class="repo-icon">📁</span> frontend</span></td>
-                                    <td><span class="status-badge healthy">● Healthy</span></td>
-                                    <td>
-                                        <div class="score-bar-container">
-                                            <div class="score-bar">
-                                                <div class="score-bar-fill high" style="width: 82%"></div>
-                                            </div>
-                                            <span class="score-value">82%</span>
-                                        </div>
-                                    </td>
-                                    <td>Low</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="repo-name"><span class="repo-icon">📁</span> core-service</span>
-                                    </td>
-                                    <td><span class="status-badge warning">● Warning</span></td>
-                                    <td>
-                                        <div class="score-bar-container">
-                                            <div class="score-bar">
-                                                <div class="score-bar-fill medium" style="width: 64%"></div>
-                                            </div>
-                                            <span class="score-value">64%</span>
-                                        </div>
-                                    </td>
-                                    <td>Medium</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="repo-name"><span class="repo-icon">📁</span> infra</span></td>
-                                    <td><span class="status-badge critical">● Critical</span></td>
-                                    <td>
-                                        <div class="score-bar-container">
-                                            <div class="score-bar">
-                                                <div class="score-bar-fill low" style="width: 38%"></div>
-                                            </div>
-                                            <span class="score-value">38%</span>
-                                        </div>
-                                    </td>
-                                    <td>High</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="repo-name"><span class="repo-icon">📁</span> mobile-app</span></td>
-                                    <td><span class="status-badge healthy">● Healthy</span></td>
-                                    <td>
-                                        <div class="score-bar-container">
-                                            <div class="score-bar">
-                                                <div class="score-bar-fill high" style="width: 79%"></div>
-                                            </div>
-                                            <span class="score-value">79%</span>
-                                        </div>
-                                    </td>
-                                    <td>Low</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Team Activity Feed -->
+                    <!-- Activity Feed -->
                     <div class="activity-feed" id="activity-feed">
-                        <h4>Team Activity</h4>
-
-                        <div class="feed-item">
-                            <div class="feed-avatar">AM</div>
-                            <div class="feed-body">
-                                <div class="feed-action"><strong>Arjun M.</strong> merged PR <span
-                                        class="highlight">#413</span> in frontend</div>
-                                <div class="feed-time">2 minutes ago</div>
-                            </div>
-                        </div>
-
-                        <div class="feed-item">
-                            <div class="feed-avatar">PS</div>
-                            <div class="feed-body">
-                                <div class="feed-action"><strong>Priya S.</strong> opened PR <span
-                                        class="highlight">#415</span> — payment gateway</div>
-                                <div class="feed-time">14 minutes ago</div>
-                            </div>
-                        </div>
-
-                        <div class="feed-item">
-                            <div class="feed-avatar">DK</div>
-                            <div class="feed-body">
-                                <div class="feed-action"><strong>Dev K.</strong> deployed <span
-                                        class="highlight">v2.8.1</span> to staging</div>
-                                <div class="feed-time">1 hour ago</div>
-                            </div>
-                        </div>
-
-                        <div class="feed-item">
-                            <div class="feed-avatar">SL</div>
-                            <div class="feed-body">
-                                <div class="feed-action"><strong>Sara L.</strong> requested review on <span
-                                        class="highlight">#412</span></div>
-                                <div class="feed-time">2 hours ago</div>
-                            </div>
-                        </div>
-
-                        <div class="feed-item">
-                            <div class="feed-avatar">RP</div>
-                            <div class="feed-body">
-                                <div class="feed-action"><strong>Raj P.</strong> resolved 3 code review comments on
-                                    <span class="highlight">#411</span></div>
-                                <div class="feed-time">3 hours ago</div>
-                            </div>
-                        </div>
-
-                        <div class="feed-item">
-                            <div class="feed-avatar">AI</div>
-                            <div class="feed-body">
-                                <div class="feed-action"><strong>DevIntel AI</strong> flagged <span
-                                        class="highlight">infra</span> repo as critical — test coverage below 40%</div>
-                                <div class="feed-time">4 hours ago</div>
+                        <h4>Recent Activity</h4>
+                        <div id="activity-feed-body">
+                            <div class="loading-state">
+                                <div class="spinner"></div><br>Loading activity…
                             </div>
                         </div>
                     </div>

@@ -27,14 +27,16 @@
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 20px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --sidebar-width: 240px;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -440,13 +442,13 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .sidebar-logo .logo-icon {
   width: 30px;
   height: 30px;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 7px;
   display: flex;
   align-items: center;
@@ -474,7 +476,7 @@ button {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255, 255, 255, 0.3);
   padding: 16px 12px 6px;
 }
 
@@ -486,18 +488,18 @@ button {
   border-radius: var(--radius-sm);
   font-size: 13.5px;
   font-weight: 400;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255, 255, 255, 0.55);
   transition: all 0.12s;
   cursor: pointer;
 }
 
 .nav-item:hover {
   background: var(--bg-sidebar-hover);
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .nav-item.active {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
   font-weight: 500;
 }
@@ -515,7 +517,7 @@ button {
 
 .sidebar-footer {
   padding: 16px 12px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .sidebar-user {
@@ -530,7 +532,7 @@ button {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -545,7 +547,7 @@ button {
 
 .sidebar-user .user-info .role {
   font-size: 11px;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 /* — Main Content — */
@@ -1056,11 +1058,306 @@ button {
 }
 
 
+/* ===== SETTINGS PAGE ===== */
+
+.settings-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.settings-card-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.settings-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  max-width: 560px;
+}
+
+.connection-badge {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.connection-badge.connected {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.connection-badge.disconnected {
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+}
+
+.github-user-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.github-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.github-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.github-user-details strong {
+  font-size: 14px;
+}
+
+.github-user-details span {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.gh-repos-count {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.token-input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.token-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+}
+
+.token-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.token-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 13px;
+  padding: 12px 0;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.token-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.token-toggle {
+  font-size: 14px;
+  padding: 4px;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.token-toggle:hover {
+  opacity: 1;
+}
+
+.token-feedback {
+  font-size: 13px;
+  padding: 0;
+  min-height: 20px;
+  margin-bottom: 20px;
+}
+
+.token-feedback.success {
+  color: var(--success);
+}
+
+.token-feedback.error {
+  color: var(--danger);
+}
+
+.settings-instructions {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+}
+
+.settings-instructions h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.settings-instructions ol {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-instructions li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.settings-instructions a {
+  color: var(--info);
+  text-decoration: underline;
+}
+
+.settings-instructions code {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 12px;
+}
+
+.permissions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.permission-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.perm-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.perm-icon.granted {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.perm-icon.optional {
+  background: var(--bg-card);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border);
+}
+
+.permission-item strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.permission-item span {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Loading & Empty States */
+.loading-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.loading-state .spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.empty-state a {
+  color: var(--info);
+  text-decoration: underline;
+}
+
+.token-banner {
+  background: var(--warning-bg);
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #92400e;
+}
+
+.token-banner a {
+  font-weight: 600;
+  color: #92400e;
+  text-decoration: underline;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1100px) {
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .charts-grid,
   .bottom-grid {
     grid-template-columns: 1fr;
@@ -1071,23 +1368,29 @@ button {
   .landing {
     grid-template-columns: 1fr;
   }
+
   .landing-right {
     border-left: none;
     border-top: 1px solid var(--border);
     padding: 40px 32px;
   }
+
   .landing-left {
     padding: 100px 32px 60px;
   }
+
   .landing-logo {
     left: 32px;
   }
+
   .landing-left h1 {
     font-size: 38px;
   }
+
   .landing-left h1 span {
     font-size: 32px;
   }
+
   .landing-features {
     flex-direction: column;
     gap: 16px;
@@ -1098,15 +1401,19 @@ button {
   .sidebar {
     display: none;
   }
+
   .main-content {
     margin-left: 0;
   }
+
   .dashboard-content {
     padding: 20px 16px;
   }
+
   .topbar {
     padding: 12px 16px;
   }
+
   .metrics-grid {
     grid-template-columns: 1fr;
   }

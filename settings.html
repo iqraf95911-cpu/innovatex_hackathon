@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DevIntel AI Settings — Connect your GitHub account.">
+    <title>Settings — DevIntel AI</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2318181b'/><text x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='16' font-weight='bold' font-family='sans-serif'>D</text></svg>">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">D</div>
+                <a href="index.html" class="logo-text">DevIntel AI</a>
+            </div>
+            <nav class="sidebar-nav">
+                <span class="nav-section-label">Overview</span>
+                <a class="nav-item" href="dashboard.html" id="nav-dashboard">
+                    <span class="nav-icon">📊</span> Dashboard
+                </a>
+                <a class="nav-item" href="dashboard.html" id="nav-repositories">
+                    <span class="nav-icon">📁</span> Repositories
+                </a>
+                <a class="nav-item" href="dashboard.html" id="nav-prs">
+                    <span class="nav-icon">🔀</span> Pull Requests
+                </a>
+                <span class="nav-section-label">Analytics</span>
+                <a class="nav-item" href="dashboard.html" id="nav-sprints">
+                    <span class="nav-icon">🏃</span> Sprints
+                </a>
+                <a class="nav-item" href="dashboard.html" id="nav-team">
+                    <span class="nav-icon">👥</span> Team
+                </a>
+                <a class="nav-item" href="dashboard.html" id="nav-insights">
+                    <span class="nav-icon">💡</span> AI Insights
+                </a>
+                <span class="nav-section-label">Manage</span>
+                <a class="nav-item" href="dashboard.html" id="nav-integrations">
+                    <span class="nav-icon">🔗</span> Integrations
+                </a>
+                <a class="nav-item active" href="settings.html" id="nav-settings">
+                    <span class="nav-icon">⚙️</span> Settings
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar" id="sidebar-avatar">—</div>
+                    <div class="user-info">
+                        <div class="name" id="sidebar-name">Not connected</div>
+                        <div class="role" id="sidebar-role">Configure token below</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN ===== -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h2>Settings</h2>
+                    <span class="topbar-breadcrumb">/ GitHub Integration</span>
+                </div>
+                <div class="topbar-right"></div>
+            </header>
+
+            <div class="dashboard-content">
+
+                <!-- Connection Status -->
+                <div class="settings-card" id="connection-status-card">
+                    <div class="settings-card-header">
+                        <h3>GitHub Connection</h3>
+                        <span class="connection-badge disconnected" id="connection-badge">● Disconnected</span>
+                    </div>
+                    <p class="settings-desc">Connect your GitHub account to pull live repository data, pull requests,
+                        team activity, and analytics into your dashboard.</p>
+
+                    <!-- User info (shown when connected) -->
+                    <div class="github-user-info" id="github-user-info" style="display:none;">
+                        <img class="github-avatar" id="gh-avatar" src="" alt="avatar">
+                        <div class="github-user-details">
+                            <strong id="gh-name">—</strong>
+                            <span id="gh-login">@—</span>
+                            <span class="gh-repos-count" id="gh-repos-count">0 repos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Token Input -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3>Personal Access Token</h3>
+                    </div>
+                    <p class="settings-desc">Paste your GitHub Personal Access Token (PAT) below. This token is stored
+                        in server memory only for this session — never persisted to disk.</p>
+
+                    <div class="token-input-group">
+                        <div class="token-input-wrapper">
+                            <span class="token-icon">🔑</span>
+                            <input type="password" id="token-input" class="token-input"
+                                placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+                            <button class="token-toggle" id="token-toggle" title="Show/Hide">👁️</button>
+                        </div>
+                        <button class="btn-primary" id="connect-btn" style="border-radius: 10px;">Connect
+                            GitHub</button>
+                    </div>
+
+                    <div class="token-feedback" id="token-feedback"></div>
+
+                    <!-- Instructions -->
+                    <div class="settings-instructions">
+                        <h4>How to generate a token</h4>
+                        <ol>
+                            <li>Go to <a href="https://github.com/settings/tokens/new" target="_blank"
+                                    rel="noopener">GitHub → Settings → Developer Settings → Personal Access Tokens</a>
+                            </li>
+                            <li>Click <strong>"Generate new token (classic)"</strong></li>
+                            <li>Give it a name like <code>DevIntel AI</code></li>
+                            <li>Select scopes: <code>repo</code> (full access to private & public repos)</li>
+                            <li>Click <strong>"Generate token"</strong> and copy it</li>
+                            <li>Paste it above and click <strong>Connect GitHub</strong></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Permissions Info -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3>Required Permissions</h3>
+                    </div>
+                    <div class="permissions-grid">
+                        <div class="permission-item">
+                            <span class="perm-icon granted">✓</span>
+                            <div>
+                                <strong>repo</strong>
+                                <span>Access to public and private repositories, PRs, issues</span>
+                            </div>
+                        </div>
+                        <div class="permission-item">
+                            <span class="perm-icon optional">○</span>
+                            <div>
+                                <strong>read:org</strong>
+                                <span>Optional — list organization repos and teams</span>
+                            </div>
+                        </div>
+                        <div class="permission-item">
+                            <span class="perm-icon optional">○</span>
+                            <div>
+                                <strong>read:user</strong>
+                                <span>Optional — access user profile information</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ---- Settings Page Logic ----
+        const tokenInput = document.getElementById('token-input');
+        const connectBtn = document.getElementById('connect-btn');
+        const toggleBtn = document.getElementById('token-toggle');
+        const feedback = document.getElementById('token-feedback');
+        const badge = document.getElementById('connection-badge');
+        const userInfo = document.getElementById('github-user-info');
+
+        // Toggle visibility
+        toggleBtn.addEventListener('click', () => {
+            tokenInput.type = tokenInput.type === 'password' ? 'text' : 'password';
+        });
+
+        // Connect
+        connectBtn.addEventListener('click', async () => {
+            const token = tokenInput.value.trim();
+            if (!token) {
+                showFeedback('Please paste your GitHub token.', 'error');
+                return;
+            }
+            connectBtn.textContent = 'Connecting…';
+            connectBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/settings/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+                if (!res.ok) throw new Error('Failed to save token');
+
+                // Verify by checking status
+                const status = await fetch('/api/settings/token-status').then(r => r.json());
+                if (status.connected) {
+                    showFeedback(`Connected as ${status.user.login}`, 'success');
+                    updateUI(status);
+                } else {
+                    showFeedback('Token saved but could not verify. Check the token and try again.', 'error');
+                }
+            } catch (e) {
+                showFeedback(`Error: ${e.message}`, 'error');
+            } finally {
+                connectBtn.textContent = 'Connect GitHub';
+                connectBtn.disabled = false;
+            }
+        });
+
+        function showFeedback(msg, type) {
+            feedback.textContent = msg;
+            feedback.className = 'token-feedback ' + type;
+        }
+
+        function updateUI(status) {
+            if (status.connected) {
+                badge.textContent = '● Connected';
+                badge.className = 'connection-badge connected';
+                userInfo.style.display = 'flex';
+                document.getElementById('gh-avatar').src = status.user.avatar_url;
+                document.getElementById('gh-name').textContent = status.user.name || status.user.login;
+                document.getElementById('gh-login').textContent = '@' + status.user.login;
+                document.getElementById('gh-repos-count').textContent = (status.user.public_repos + status.user.total_private_repos) + ' repos';
+                // Update sidebar
+                document.getElementById('sidebar-name').textContent = status.user.name || status.user.login;
+                document.getElementById('sidebar-role').textContent = '@' + status.user.login;
+                document.getElementById('sidebar-avatar').textContent = (status.user.login || '?').substring(0, 2).toUpperCase();
+            }
+        }
+
+        // Check on load
+        (async () => {
+            try {
+                const status = await fetch('/api/settings/token-status').then(r => r.json());
+                if (status.connected) updateUI(status);
+            } catch (_) { }
+        })();
+    </script>
+</body>
+
+</html>
